@@ -1,0 +1,20 @@
+---
+title: "2023 Field Collection Summary"
+author: "Lili Benitez"
+date: "2024-05-06"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+outcross<-read_csv("C:\\Users\\lb37426\\Downloads\\Outcrossing.csv")
+
+summary<-outcross%>%
+  group_by(`plant code`, `treatment assigned`)%>%
+  summarize(nplant=n(),numfruit1=sum(Num_fruit...9, na.rm=TRUE), numfruit2=sum(Num_fruit...17, na.rm=TRUE),numSeed=sum(Num_seeds, na.rm=TRUE), numflowers=sum(Num_flowers, na.rm=TRUE), openflw=sum(Num_open_flw, na.rm=TRUE),meadow1= list(unique(meadow)))%>%
+  unique()
+
+summary_df<-as.data.frame(summary)
+summary_df$meadow1 <- sapply(summary_df$meadow1 , toString)
+write.csv(summary_df, "outcrossing2023.csv", col.names = TRUE, row.names=FALSE)
+```
