@@ -7,12 +7,22 @@ output: html_document
 
 ```{r}
 library(tidyverse)
-outcross<-read_csv("C:\\Users\\lb37426\\Downloads\\Outcrossing.csv")
+outcross<-read_csv("C:\\Users\\lb37426\\Downloads\\Outcrossing.csv")%>%
+  filter(str_detect(date, "2023"))
 
 summary<-outcross%>%
   group_by(`plant code`, `treatment assigned`)%>%
-  summarize(nplant=n(),numfruit1=sum(Num_fruit...9, na.rm=TRUE), numfruit2=sum(Num_fruit...17, na.rm=TRUE),numSeed=sum(Num_seeds, na.rm=TRUE), numflowers=sum(Num_flowers, na.rm=TRUE), openflw=sum(Num_open_flw, na.rm=TRUE),meadow1= list(unique(meadow)))%>%
+  summarize(nplant=n(),numfruit1=sum(Num_fruit...9, na.rm=TRUE), numfruit2=sum(Num_fruit...17, na.rm=TRUE),numSeed=sum(Num_seeds, na.rm=TRUE), nIndividuals=length(unique(`ID(0001-2000)`)), openflw=sum(Num_open_flw, na.rm=TRUE), meanSeed_plant=mean(Num_seeds, na.rm=TRUE),meadow1= list(unique(meadow)))%>%
   unique() #some columns named the same, why?
+
+
+plantID<-outcross%>%
+  group_by(`plant code`, `ID(0001-2000)`)%>%
+ select(`plant code`, `ID(0001-2000)`)%>%
+  summarize(n=n())# I think they are each from different plants? 
+
+mean_seed<-outcross%>%
+  group_by(`plant code`, `treatment assigned`, meadow, `ID(0001-2000)`)
 
 summary_df<-as.data.frame(summary)
 summary_df$meadow1 <- sapply(summary_df$meadow1 , toString) #to remove the list element
